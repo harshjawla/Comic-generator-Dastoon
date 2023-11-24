@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comic generator</title>
+    <link href="index.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="px-4 py-5 my-5 text-center">
+      <img
+        class="d-block mx-auto mb-4"
+        src="pngwing.com.png"
+        alt=""
+        width="72"
+        height="57"
+      />
+      <h1 class="display-5 fw-bold text-body-emphasis">Comic generator</h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">Enter a text prompt to generate comic panel!</p>
+        <form action="javacript:" onsubmit="{query(this)}">
+          <div class="row">
+            <div class="input-group mb-3">
+              <div class="col-auto">
+                <select class="form-select" name="panel">
+                  <option selected>Select Panel</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                  <option value="3">Three</option>
+                  <option value="4">Four</option>
+                  <option value="5">Five</option>
+                  <option value="6">Six</option>
+                  <option value="7">Seven</option>
+                  <option value="8">Eight</option>
+                  <option value="9">Nine</option>
+                </select>
+              </div>
+              <div class="col-10">
+                <input name="comicText" type="text" class="form-control" />
+              </div>
+            </div>
+          </div>
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <button
+              id="submitButton"
+              type="submit"
+              class="btn btn-primary btn-lg px-4 gap-3"
+            >
+              Generate Comic
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <article class="comic">
+      <div id="p1" class="panel">
+        <p class="text top-left">Suddenly...</p>
+        <p class="text bottom-right">...something amazing happened</p>
+      </div>
+      <div id="p2" class="panel">
+        <p class="text top-left">Try resizing...</p>
+        <p class="text bottom-right">...it's responsive</p>
+      </div>
+      <div id="p3" class="panel">
+        <p class="speech">A speech bubble</p>
+      </div>
+      <div id="p4" class="panel"></div>
+      <div id="p5" class="panel"></div>
+      <div id="p6" class="panel"></div>
+      <div id="p7" class="panel"></div>
+      <div id="p8" class="panel"></div>
+      <div id="p9" class="panel">
+        <p class="text bottom-right">THE END</p>
+      </div>
+    </article>
+    <!-- <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script> -->
+    <script>
+      function setLoading(action) {
+        const ele = document.getElementById("submitButton");
+        ele.disabled = action;
+        if (action) ele.innerText = "Loading";
+        else ele.innerText = "Generate Comic";
+      }
+      const generateComic = async (data) => {
+        const response = await fetch(
+          "https://xdwvg9no7pefghrn.us-east-1.aws.endpoints.huggingface.cloud",
+          {
+            headers: {
+              Accept: "image/png",
+              Authorization:
+                "Bearer VknySbLLTUjbxXAXCjyfaFIPwUTCeRXbFSOjwRiCxsxFyhbnGjSFalPKrpvvDAaPVzWEevPljilLVDBiTzfIbWFdxOkYJxnOPoHhkkVGzAknaOulWggusSFewzpqsNWM",
+              "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: JSON.stringify(data),
+          }
+        );
+        const result = await response.blob();
+        return result;
+      };
+      const query = async (from) => {
+        const text = from.comicText.value;
+        const panel = from.panel.value;
+        setLoading(true);
+        const blob = await generateComic({
+          inputs: text,
+        });
+        const imageURl = URL.createObjectURL(blob)
+        document.getElementById(
+          `p${panel}`
+        ).style.backgroundImage = `url(${imageURl})`;
+        // console.log(image);
+        setLoading(false)
+      };
+    </script>
+  </body>
+</html>
