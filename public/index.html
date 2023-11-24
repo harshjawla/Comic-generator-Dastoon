@@ -24,7 +24,7 @@
       <h1 class="display-5 fw-bold text-body-emphasis">Comic generator</h1>
       <div class="col-lg-6 mx-auto">
         <p class="lead mb-4">Enter a text prompt to generate comic panel!</p>
-        <form action="javacript:" onsubmit="{query(this)}">
+        <form action="javascript:void(0);" onsubmit="{query(this)}">
           <div class="row">
             <div class="input-group mb-3">
               <div class="col-auto">
@@ -112,6 +112,7 @@
       const query = async (from) => {
         const text = from.comicText.value;
         const panel = from.panel.value;
+        if(isNaN(panel)) return null;
         setLoading(true);
         const blob = await generateComic({
           inputs: text,
